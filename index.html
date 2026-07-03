@@ -18,28 +18,26 @@
 
     <div class="header">Space Débris のマイ本棚</div>
     
-    <!-- ⚠️ ここに入力欄とボタンが正しく並びます -->
     <div class="controls">
         <input type="text" id="bookTitleInput" placeholder="本のタイトルを入力">
         <button id="addBookButton">本棚に追加</button>
     </div>
 
-    <!-- 本が並ぶ本棚エリア -->
     <div class="bookshelf" id="bookshelfArea"></div>
 
-    <!-- Firebaseのプログラム -->
     <script type="module">
+        // ⚠️ ここは必ずネット用のURL（https://...）を使います
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // あなたのデータベースの正しい鍵
+        // 🔑 あなたが見つけてくれた【本物のデータベースの鍵】
         const firebaseConfig = {
-            apiKey: "AIzaSyAs-dM9E6XpZqgO1D_LpLqXH0W3g0fN8YQ",
-            authDomain: "my-bookshelf-app-7670d.firebaseapp.com",
-            projectId: "my-bookshelf-app-7670d",
-            storageBucket: "my-bookshelf-app-7670d.firebasestorage.app",
-            messagingSenderId: "1032338600108",
-            appId: "1:1032338600108:web:75734563a620b704e0689b"
+            apiKey: "AIzaSyDAz1YhpA-FlW1kMMtVKxHpidm69cey0BY",
+            authDomain: "my-bookshelf-app-ebe61.firebaseapp.com",
+            projectId: "my-bookshelf-app-ebe61",
+            storageBucket: "my-bookshelf-app-ebe61.firebasestorage.app",
+            messagingSenderId: "178813313492",
+            appId: "1:178813313492:web:e657bebdba24bc0333b641"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -49,15 +47,13 @@
         const titleInput = document.getElementById('bookTitleInput');
         const bookshelf = document.getElementById('bookshelfArea');
 
-        // 🚀 【機能1】データベースからリアルタイムに本を取得して画面に並べる
+        // データベースからリアルタイムに取得
         const q = query(collection(db, "books"), orderBy("createdAt", "asc"));
         
         onSnapshot(q, (snapshot) => {
-            bookshelf.innerHTML = ""; // いったん画面をクリア
-            
+            bookshelf.innerHTML = ""; 
             snapshot.forEach((doc) => {
                 const bookData = doc.data();
-                
                 const newBook = document.createElement('div');
                 newBook.className = 'book';
                 newBook.textContent = bookData.title;
@@ -65,7 +61,7 @@
             });
         });
 
-        // 🚀 【機能2】ボタンを押したらデータベースに保存する
+        // データベースに保存
         addButton.addEventListener('click', async function() {
             const titleText = titleInput.value;
 
@@ -79,7 +75,6 @@
                     title: titleText,
                     createdAt: new Date()
                 });
-                
                 titleInput.value = ""; 
             } catch (error) {
                 console.error("エラーが発生しました: ", error);
@@ -87,6 +82,5 @@
             }
         });
     </script>
-
 </body>
 </html>
