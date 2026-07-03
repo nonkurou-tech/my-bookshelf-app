@@ -18,21 +18,21 @@
 
     <div class="header">Space Débris のマイ本棚</div>
     
+    <!-- ⚠️ ここに入力欄とボタンが正しく並びます -->
     <div class="controls">
         <input type="text" id="bookTitleInput" placeholder="本のタイトルを入力">
         <button id="addBookButton">本棚に追加</button>
     </div>
 
+    <!-- 本が並ぶ本棚エリア -->
     <div class="bookshelf" id="bookshelfArea"></div>
 
+    <!-- Firebaseのプログラム -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // ② 【コピペエリア】あなたのFirebaseの画面に表示されている「firebaseConfig」を、この下に上書き貼り付けしてください
-
-        // ------------------------------------------------------------
-        // ① あなたのデータベースの正しい鍵（カンマやカッコを綺麗に整えました）
+        // あなたのデータベースの正しい鍵
         const firebaseConfig = {
             apiKey: "AIzaSyAs-dM9E6XpZqgO1D_LpLqXH0W3g0fN8YQ",
             authDomain: "my-bookshelf-app-7670d.firebaseapp.com",
@@ -42,28 +42,22 @@
             appId: "1:1032338600108:web:75734563a620b704e0689b"
         };
 
-        // ② Firebaseとデータベースをそれぞれ1回だけ起動する命令
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        // ------------------------------------------------------------
 
-        // 画面のパーツを取得
         const addButton = document.getElementById('addBookButton');
         const titleInput = document.getElementById('bookTitleInput');
         const bookshelf = document.getElementById('bookshelfArea');
 
         // 🚀 【機能1】データベースからリアルタイムに本を取得して画面に並べる
-        // データベースの「books」という引き出しを、登録順（createdAtの古い順）に並び替えて監視する
         const q = query(collection(db, "books"), orderBy("createdAt", "asc"));
         
-        // データベースに変化（追加など）があったら、自動的にこの中身が実行される
         onSnapshot(q, (snapshot) => {
-            bookshelf.innerHTML = ""; // いったん画面を綺麗にリセット
+            bookshelf.innerHTML = ""; // いったん画面をクリア
             
             snapshot.forEach((doc) => {
                 const bookData = doc.data();
                 
-                // データベースから届いた本の名前で、本棚（HTML）を組み立てる
                 const newBook = document.createElement('div');
                 newBook.className = 'book';
                 newBook.textContent = bookData.title;
@@ -71,7 +65,7 @@
             });
         });
 
-        // 🚀 【機能2】ボタンを押したら、入力された文字をデータベースに送り届ける
+        // 🚀 【機能2】ボタンを押したらデータベースに保存する
         addButton.addEventListener('click', async function() {
             const titleText = titleInput.value;
 
@@ -81,16 +75,15 @@
             }
 
             try {
-                // データベースの「books」という引き出しに、タイトルと今の時間を保存する
                 await addDoc(collection(db, "books"), {
                     title: titleText,
-                    createdAt: new Date() // 追加した日時
+                    createdAt: new Date()
                 });
                 
-                titleInput.value = ""; // 入力欄を空っぽにする
+                titleInput.value = ""; 
             } catch (error) {
                 console.error("エラーが発生しました: ", error);
-                alert("データベースへの保存に失敗しました。ルールがテストモードになっているか確認してください。");
+                alert("データベースへの保存に失敗しました。");
             }
         });
     </script>
